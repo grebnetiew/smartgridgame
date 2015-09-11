@@ -1,7 +1,5 @@
 // Made for use with Arduino
-// still wanted: battery in one of the cities (lake?)
-// : comms with leds
-// : score keeping on an lcd
+// todo: buttons
 
 #include <string>
 #include <Wire.h>
@@ -35,6 +33,7 @@ void loop() {
         state.tick();
         board.setLeds(state);
     }
+    board.readButtons(state);
     setLCD();
 }
 
