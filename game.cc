@@ -39,12 +39,11 @@ void loop() {
 }
 
 void updateScores() {
-    state.d_score += 
+    state.d_score += 600 - board.ledCoal*300 +
         (board.ledCity[0] == 2 ? 100 : (board.ledCity[0] == 1 || board.ledCity[0] == 3) ? 20 : 0) +
         (board.ledCity[1] == 2 ? 100 : (board.ledCity[1] == 1 || board.ledCity[1] == 3) ? 20 : 0) +
         (board.ledCity[2] == 2 ? 100 : (board.ledCity[2] == 1 || board.ledCity[2] == 3) ? 20 : 0) +
-        (board.ledCity[3] == 2 ? 100 : (board.ledCity[3] == 1 || board.ledCity[3] == 3) ? 20 : 0) +
-        600 - board.ledCoal*300;
+        (board.ledCity[3] == 2 ? 100 : (board.ledCity[3] == 1 || board.ledCity[3] == 3) ? 20 : 0);
 }
 
 void setLCD() {
