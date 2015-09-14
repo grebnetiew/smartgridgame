@@ -10,7 +10,7 @@ public: // yeah yeah
     size_t  d_coal_power = 20;   // to city 0
     size_t  d_lake_contents = 0;
     double  d_price = 1.0;
-    size_t  d_score = 0;
+    size_t score = 0;
 
     void tick();
     void processButton(size_t btn);
@@ -49,13 +49,12 @@ void CityState::tick() {
         } else {
             d_lake_contents += d_city_supply[2] - d_city_usage[2];
             d_city_supply[2] = d_city_usage[2];
-        }
     }
 
-    log("Tick " + String(d_time) + " complete");
+    log("Tick " + to_string(d_time) + " complete");
 }
 
-void CityState::processButton(size_t btn) {
+size_t CityState::processButton(size_t btn) {
     // 0 (-) and 8 (+) are for link 1, and so on
     if (btn < 5) {
         d_link_delta[btn] -= 10;
@@ -94,29 +93,22 @@ size_t CityState::solar_power() {
 }
 
 class BoardState {
-public:
-    int ledCity[4];
+    int ledCity[4] = {2, 2, 2, 2};
     int ledCoal = 0;
     int ledLake = 0;
-    bool buttonPressed[14]; // Prevent double presses
+    bool[14] buttonPressed; // Prevent double presses
 
     IOExpander &exp;
 
-    BoardState(IOExpander &e);
+public:
+    BoardState(IOExpander &e): exp(e) {memset(buttonPressed, 0, sizeof(buttonPressed));}
     void setLeds(CityState &state);
     void readButtons(CityState &state);
-};
-
-BoardState::BoardState(IOExpander &e):
-    ledCity({2, 2, 2, 2}),
-    exp(e)
-{
-    memset(buttonPressed, 0, sizeof(buttonPressed));
 }
 
 void BoardState::setLeds(CityState &state) {
     // Update the city led states
-    for (size_t i = 0; i != 4; ++i) {
+    for (size_t i : {0, 1, 2, 3}) {
         int delta = state.d_city_supply[i] - state.d_city_usage[i];
         ledCity[i] = (delta < -20) ? 0 :
                      (delta < -5)  ? 1 :
@@ -131,17 +123,17 @@ void BoardState::setLeds(CityState &state) {
               (state.d_lake_contents <= 350) ? 1 : 2;
 
     // City 1 has leds 0-4, 2 has 5-9 etc ...15-19
-    for (size_t i = 0; i != 5; ++i) {
+    for (size_t i : {0, 1, 2, 3, 4}) {
         exp.set(i,      ledCity[0] == i);
         exp.set(i + 5,  ledCity[1] == i);
         exp.set(i + 10, ledCity[2] == i);
         exp.set(i + 15, ledCity[3] == i);
     }
-    for (size_t i = 0; i != 3; ++i) {
+    for (size_t i : {0, 1, 2}) {
         // leds 20-22 are for power production
-        exp.set(i + 20, ledCoal == i);
+        exp.set(i + 20, ledCoal == i)
         // leds 23-25 are for the lake
-        exp.set(i + 23, ledLake == i);
+        exp.set(i + 23, ledLake == i)
     }
 }
 

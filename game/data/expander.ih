@@ -9,18 +9,16 @@
 // 24-27 PORTA of U4 (only connectors 4-7, the others select analogread addr)
 // The analog pins are input only, 16 times. These will be buttons. 
 
-#include <stdint.h>
-
 class IOExpander {
-    uint8_t states[4];
+    uint_8[4] states = {0u, 0u, 0u, 0u};
 
 public:
     IOExpander();
     void set(size_t pin, bool state);
-    uint8_t analogRead(size_t pin);
+    uint_8 analogRead(size_t pin);
 private:
     void analogSelect(size_t pin);
-};
+}
 
 void IOExpander::set(size_t pin, bool newState) {
     if (pin < 16) {
@@ -61,14 +59,12 @@ void IOExpander::analogSelect(size_t pin) {
     Wire.endTransmission();
 }
 
-uint8_t IOExpander::analogRead(size_t pin) {
+uint_8 IOExpander::analogRead(size_t pin) {
     analogSelect(pin);
     return analogRead(0);           // The common reader pin
 }
 
-IOExpander::IOExpander(): 
-    states({0u, 0u, 0u, 0u})
-{
+IOExpander::IOexpander() {
     // First, set all digital pins to output. This was Ctrl-V'd from tutorial
     Wire.beginTransmission(0x20);                  // Starts communication with MCP23017(U2) IC
     Wire.write(0x00);                              // Set MCP23017 memory pointer to IODIRA address
@@ -99,6 +95,6 @@ IOExpander::IOExpander():
     *  register addresses.
     *  (Duplicate initialization code removed)
     */
-    // Problems if you include it - just set in main file
-    // pinMode(0, INPUT);                           // Set Analog Common I/O(Arduino Analog A0) to INPUT
+
+    pinMode(0, INPUT);                             // Set Analog Common I/O(Arduino Analog A0) to INPUT
 }
