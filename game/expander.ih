@@ -17,6 +17,8 @@ class IOExpander {
 public:
     IOExpander();
     void set(size_t pin, bool state);
+    void update();
+    void post();
     uint8_t analogRead(size_t pin);
 private:
     void analogSelect(size_t pin);
@@ -24,32 +26,48 @@ private:
 
 void IOExpander::set(size_t pin, bool newState) {
     if (pin < 16) {
-        Wire.beginTransmission(0x20);   // Select U2
         if (pin < 8) {
             states[0] = newState ? states[0] | (1u << pin) : states[0] & ~(1u << pin);
-            Wire.write(0x13);           // Select PORTB
-            Wire.write(states[0]);      // Write states
         } else {
             pin -= 8;
             states[1] = newState ? states[1] | (1u << pin) : states[1] & ~(1u << pin);
-            Wire.write(0x12);           // Select PORTA
-            Wire.write(states[1]);      // Write states
         }
     } else {
         pin -= 16;
-        Wire.beginTransmission(0x21);   // Select U4
         if (pin < 8) {
             states[2] = newState ? states[2] | (1u << pin) : states[2] & ~(1u << pin);
-            Wire.write(0x13);           // Select PORTB
-            Wire.write(states[2]);      // Write states
         } else {
             pin -= 4; // Only write the high ports of this register, the rest is analog
             states[3] = newState ? states[3] | (1u << pin) : states[3] & ~(1u << pin);
-            Wire.write(0x12);           // Select PORTA
-            Wire.write(states[3]);      // Write states
         }
     }
+}
+
+void IOExpander::update() {
+    Wire.beginTransmission(0x20);   // Select U2
+    Wire.write(0x13);           // Select PORTB
+    Wire.write(states[0]);      // Write states
     Wire.endTransmission();
+
+    Wire.beginTransmission(0x20);   // Select U2
+    Wire.write(0x12);           // Select PORTA
+    Wire.write(states[1]);      // Write states
+    Wire.endTransmission();
+
+    Wire.beginTransmission(0x21);   // Select U4
+    Wire.write(0x13);           // Select PORTB
+    Wire.write(states[2]);      // Write states
+    Wire.endTransmission();
+
+    Wire.beginTransmission(0x21);   // Select U4
+    Wire.write(0x12);           // Select PORTA
+    Wire.write(states[3]);      // Write states
+    Wire.endTransmission();
+}
+
+void IOExpander::post() {
+    for (size_t i = 0; i != 28; set(i++, true));
+    update();
 }
 
 void IOExpander::analogSelect(size_t pin) {
@@ -63,7 +81,7 @@ void IOExpander::analogSelect(size_t pin) {
 
 uint8_t IOExpander::analogRead(size_t pin) {
     analogSelect(pin);
-    return analogRead(0);           // The common reader pin
+    return ::analogRead(0);           // The common reader pin
 }
 
 IOExpander::IOExpander(): 

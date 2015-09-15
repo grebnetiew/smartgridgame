@@ -52,7 +52,7 @@ void CityState::tick() {
         }
     }
 
-    log("Tick " + String(d_time) + " complete");
+    // log("Tick " + String(d_time) + " complete");
 }
 
 void CityState::processButton(size_t btn) {
@@ -143,6 +143,8 @@ void BoardState::setLeds(CityState &state) {
         // leds 23-25 are for the lake
         exp.set(i + 23, ledLake == i);
     }
+    // Turn leds on and off as described above
+    exp.update();
 }
 
 void BoardState::readButtons(CityState &state) {
