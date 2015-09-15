@@ -10,9 +10,15 @@ using namespace std;
 
 void log(String message) {}
 
+String nDigit(int i, size_t digits, char pad = '0') {
+  if (digits == 1) {
+    return String(i);
+  }
+  return i >= pow(10, digits - 1) ? String(i) : String(pad) + nDigit(i, digits - 1, pad);
+}
+
 String doubleDigit(int i) {
-  static String zero('0');
-  return i > 9 ? String(i) : String(0) + String(i);
+  return nDigit(i, 2);
 }
 
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\state.ih"
@@ -27,8 +33,8 @@ class Vars {
 };
 
 Vars *v;
-
 size_t minutes = 0;
+static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
 
 void setup() {
   v = new Vars();
@@ -36,6 +42,7 @@ void setup() {
   pinMode(0, INPUT);
   Serial.begin(9600);
   v->lcd.begin(16, 2); // This contains Wire.begin()
+  v->lcd.createChar(0, euro);
 }
 
 void loop() {
@@ -43,6 +50,7 @@ void loop() {
     minutes = 0;
     v->state.tick();
     v->board.setLeds(v->state);
+    updateScores();
   }
   // v->board.readButtons(v->state);
   setLCD();
@@ -50,27 +58,30 @@ void loop() {
 
 void updateScores() {
   BoardState &board(v->board);
-  v->state.d_score += 600 - board.ledCoal*300 +
-    (board.ledCity[0] == 2 ? 100 : (board.ledCity[0] == 1 || board.ledCity[0] == 3) ? 20 : 0) +
-    (board.ledCity[1] == 2 ? 100 : (board.ledCity[1] == 1 || board.ledCity[1] == 3) ? 20 : 0) +
-    (board.ledCity[2] == 2 ? 100 : (board.ledCity[2] == 1 || board.ledCity[2] == 3) ? 20 : 0) +
-    (board.ledCity[3] == 2 ? 100 : (board.ledCity[3] == 1 || board.ledCity[3] == 3) ? 20 : 0);
+  v->state.d_score += (board.ledCoal == 1 ? 20 : 0) +
+    (board.ledCity[0] == 2 ? 3 : (board.ledCity[0] == 1 || board.ledCity[0] == 3) ? -1 : -5) +
+    (board.ledCity[1] == 2 ? 3 : (board.ledCity[1] == 1 || board.ledCity[1] == 3) ? -1 : -5) +
+    (board.ledCity[2] == 2 ? 3 : (board.ledCity[2] == 1 || board.ledCity[2] == 3) ? -1 : -5) +
+    (board.ledCity[3] == 2 ? 3 : (board.ledCity[3] == 1 || board.ledCity[3] == 3) ? -1 : -5);
 }
 
-void setLCD() {
-  updateScores();
-  v->lcd.setCursor(0, 0);
-  v->lcd.print("Tijd:");
-  v->lcd.setCursor(0, 1);
-  v->lcd.print("Prijs:");
-
-  v->lcd.setCursor(7, 0);
+void setLCD() {  
+  // Print tijd
+  v->lcd.setCursor(11, 0);
   v->lcd.print(doubleDigit(v->state.d_time / 10));
-  v->lcd.setCursor(9, 0);
+  v->lcd.setCursor(13, 0);
   v->lcd.print(":");
   v->lcd.print(doubleDigit(v->state.d_time % 10 * 6 + minutes / 2)); // Does it make sense? No. Don't care though :)
 
-  v->lcd.setCursor(7, 1);
+  // Print prijs
+  v->lcd.setCursor(0, 0);
+  v->lcd.write(0);
+  v->lcd.print(" ");
   v->lcd.print(v->state.d_price);
+
+  // Print score
+  v->lcd.setCursor(0, 1);
+  v->lcd.print("Score:     ");
+  v->lcd.print(nDigit(v->state.d_score, 5, ' '));
 }
 
