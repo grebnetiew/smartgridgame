@@ -119,4 +119,5 @@ IOExpander::IOExpander():
     */
     // Problems if you include it - just set in main file
     // pinMode(0, INPUT);                           // Set Analog Common I/O(Arduino Analog A0) to INPUT
+    post();
 }
