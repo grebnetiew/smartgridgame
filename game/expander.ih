@@ -25,21 +25,17 @@ private:
 };
 
 void IOExpander::set(size_t pin, bool newState) {
-    if (pin < 16) {
-        if (pin < 8) {
-            states[0] = newState ? states[0] | (1u << pin) : states[0] & ~(1u << pin);
-        } else {
-            pin -= 8;
-            states[1] = newState ? states[1] | (1u << pin) : states[1] & ~(1u << pin);
-        }
-    } else {
+    if (pin < 8) {
+        states[0] = newState ? states[0] | (1u << pin) : states[0] & ~(1u << pin);
+    } else if (pin < 16)) {
+        pin -= 8;
+        states[1] = newState ? states[1] | (1u << pin) : states[1] & ~(1u << pin);
+    } else if (pin < 24) {
         pin -= 16;
-        if (pin < 8) {
-            states[2] = newState ? states[2] | (1u << pin) : states[2] & ~(1u << pin);
-        } else {
-            pin -= 4; // Only write the high ports of this register, the rest is analog
-            states[3] = newState ? states[3] | (1u << pin) : states[3] & ~(1u << pin);
-        }
+        states[2] = newState ? states[2] | (1u << pin) : states[2] & ~(1u << pin);
+    } else {
+        pin -= 20; // Only write the high ports of this register, the rest is analog
+        states[3] = newState ? states[3] | (1u << pin) : states[3] & ~(1u << pin);
     }
 }
 
