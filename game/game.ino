@@ -36,7 +36,7 @@ static uint8_t euro[8] = {7, 8, 30, 8, 30, 8, 7, 0};
 
 void setup() {
   v = new Vars();
-  delay(10000); // for the led POST
+  // delay(10000); // for the led POST
   // Arduino setup phase
   pinMode(0, INPUT);
   Serial.begin(9600);
@@ -47,7 +47,7 @@ void setup() {
 void log(String message) {
   v->lcd.setCursor(0, 0);
   v->lcd.print(message);
-  delay(500);
+  delay(1000);
 }
 
 void loop() {
