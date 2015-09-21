@@ -4,11 +4,14 @@
 // todo: buttons
 
 #include <Adafruit_RGBLCDShield.h>
+int ar(int pin){
+  return analogRead(pin);
+}
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\expander.ih"
 
 using namespace std;
 
-void log(String message) {}
+void log(String message);
 
 String nDigit(int i, size_t digits, char pad = '0') {
   if (digits == 1) {
@@ -16,6 +19,7 @@ String nDigit(int i, size_t digits, char pad = '0') {
   }
   return i >= pow(10, digits - 1) ? String(i) : String(pad) + nDigit(i, digits - 1, pad);
 }
+
 
 String doubleDigit(int i) {
   return nDigit(i, 2);
@@ -36,6 +40,12 @@ Vars *v;
 size_t minutes = 0;
 static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
 
+void log(String message) {
+  v->lcd.setCursor(0, 0);
+  v->lcd.print(message + String(" "));
+  delay(1000);
+}
+
 void setup() {
   v = new Vars();
   // Arduino setup phase
@@ -52,7 +62,7 @@ void loop() {
     v->board.setLeds(v->state);
     updateScores();
   }
-  // v->board.readButtons(v->state);
+  v->board.readButtons(v->state);
   setLCD();
 }
 

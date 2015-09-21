@@ -51,33 +51,31 @@ void CityState::tick() {
             d_city_supply[2] = d_city_usage[2];
         }
     }
-
-    log("Tick " + String(d_time) + " complete");
 }
 
 void CityState::processButton(size_t btn) {
-    // 0 (-) and 8 (+) are for link 1, and so on
+    // 0 (-) and 15 (+) are for link 1, and so on
     if (btn < 5) {
         d_link_delta[btn] -= 10;
         if (d_link_delta[btn] < -30)
             d_link_delta[btn] = -30;
     }
-    if (btn > 7 && btn < 13) {
-        d_link_delta[btn-8] += 10;
-        if (d_link_delta[btn-8] > 30)
-            d_link_delta[btn-8] = 30;
+    if (btn > 10) {
+        d_link_delta[15 - btn] += 10;
+        if (d_link_delta[15 - btn] > 30)
+            d_link_delta[15 - btn] = 30;
     }
 
-    // 5 and 13 are the production
+    // 5 and 10 are the production
     if (btn == 5 && d_coal_power > 0)
         d_coal_power -= 10;
-    if (btn == 13 && d_coal_power < 50)
+    if (btn == 10 && d_coal_power < 50)
         d_coal_power += 10;
 
-    // 6 and 14 are the price
+    // 6 and 9 are the price
     if (btn == 6 && d_price > 0.7)
         d_price -= .1;
-    if (btn == 14 && d_price < 1.4)
+    if (btn == 9 && d_price < 1.4)
         d_price += .1;
 }
 
@@ -146,7 +144,7 @@ void BoardState::setLeds(CityState &state) {
 }
 
 void BoardState::readButtons(CityState &state) {
-    for (size_t i = 0; i != 14; ++i) {
+    for (size_t i = 0; i != 16; ++i) {
         bool pressed = exp.analogRead(i) > 0x20;
         if (pressed && !buttonPressed[i]) {
             state.processButton(i);
