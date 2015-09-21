@@ -1,13 +1,15 @@
 #include <Wire.h>
-#include <Adafruit_RGBLCDShield.h>
 
 // Made for use with Arduino
 // todo: buttons
 
-void log(String message);
+#include <Adafruit_RGBLCDShield.h>
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\expander.ih"
 
 using namespace std;
+
+void log(String message) {}
+
 String nDigit(int i, size_t digits, char pad = '0') {
   if (digits == 1) {
     return String(i);
@@ -32,11 +34,10 @@ class Vars {
 
 Vars *v;
 size_t minutes = 0;
-static uint8_t euro[8] = {7, 8, 30, 8, 30, 8, 7, 0};
+static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
 
 void setup() {
   v = new Vars();
-  // delay(10000); // for the led POST
   // Arduino setup phase
   pinMode(0, INPUT);
   Serial.begin(9600);
@@ -44,33 +45,27 @@ void setup() {
   v->lcd.createChar(0, euro);
 }
 
-void log(String message) {
-  v->lcd.setCursor(0, 0);
-  v->lcd.print(message);
-  delay(1000);
-}
-
 void loop() {
-  if (++minutes == 12) {
+  if(++minutes == 12) {
     minutes = 0;
     v->state.tick();
     v->board.setLeds(v->state);
     updateScores();
   }
-  v->board.readButtons(v->state);
+  // v->board.readButtons(v->state);
   setLCD();
 }
 
 void updateScores() {
   BoardState &board(v->board);
   v->state.d_score += (board.ledCoal == 1 ? 20 : 0) +
-                      (board.ledCity[0] == 2 ? 3 : (board.ledCity[0] == 1 || board.ledCity[0] == 3) ? -1 : -5) +
-                      (board.ledCity[1] == 2 ? 3 : (board.ledCity[1] == 1 || board.ledCity[1] == 3) ? -1 : -5) +
-                      (board.ledCity[2] == 2 ? 3 : (board.ledCity[2] == 1 || board.ledCity[2] == 3) ? -1 : -5) +
-                      (board.ledCity[3] == 2 ? 3 : (board.ledCity[3] == 1 || board.ledCity[3] == 3) ? -1 : -5);
+    (board.ledCity[0] == 2 ? 3 : (board.ledCity[0] == 1 || board.ledCity[0] == 3) ? -1 : -5) +
+    (board.ledCity[1] == 2 ? 3 : (board.ledCity[1] == 1 || board.ledCity[1] == 3) ? -1 : -5) +
+    (board.ledCity[2] == 2 ? 3 : (board.ledCity[2] == 1 || board.ledCity[2] == 3) ? -1 : -5) +
+    (board.ledCity[3] == 2 ? 3 : (board.ledCity[3] == 1 || board.ledCity[3] == 3) ? -1 : -5);
 }
 
-void setLCD() {
+void setLCD() {  
   // Print tijd
   v->lcd.setCursor(11, 0);
   v->lcd.print(doubleDigit(v->state.d_time / 10));
