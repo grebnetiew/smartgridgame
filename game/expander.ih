@@ -27,7 +27,7 @@ private:
 void IOExpander::set(size_t pin, bool newState) {
     if (pin < 8) {
         states[0] = newState ? states[0] | (1u << pin) : states[0] & ~(1u << pin);
-    } else if (pin < 16)) {
+    } else if (pin < 16) {
         pin -= 8;
         states[1] = newState ? states[1] | (1u << pin) : states[1] & ~(1u << pin);
     } else if (pin < 24) {
