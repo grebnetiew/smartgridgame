@@ -53,7 +53,6 @@ void setup() {
   Serial.begin(9600);
   v->lcd.begin(16, 2); // This contains Wire.begin()
   v->lcd.createChar(0, euro);
-  v->expander.set(2,1);
 }
 
 void loop() {
