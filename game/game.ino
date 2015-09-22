@@ -1,7 +1,8 @@
 #include <Wire.h>
 
-// Made for use with Arduino
-// todo: buttons
+// Addresses of the expander
+#define U2 0x21
+#define U4 0x22
 
 #include <Adafruit_RGBLCDShield.h>
 int ar(int pin){
@@ -33,7 +34,7 @@ class Vars {
     IOExpander expander;
     CityState state;
     BoardState board;
-    Vars() : lcd(), expander(), state(), board(expander) {}
+    Vars() : lcd(), expander(U2, U4), state(), board(expander) {}
 };
 
 Vars *v;
