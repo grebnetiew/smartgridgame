@@ -49,7 +49,7 @@ void log(String message) {
 void setup() {
   v = new Vars();
   // Arduino setup phase
-  pinMode(0, INPUT);
+  pinMode(A0, INPUT);
   Serial.begin(9600);
   v->lcd.begin(16, 2); // This contains Wire.begin()
   v->lcd.createChar(0, euro);

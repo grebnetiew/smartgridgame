@@ -11,8 +11,8 @@
 
 #include <stdint.h>
 
-#define U2_ADDR 0x21 // Was 20
-#define U4_ADDR 0x22 // Was 21
+#define U2_ADDR 0x22 // Was 20
+#define U4_ADDR 0x23 // Was 21
 
 class IOExpander {
 public:
@@ -71,7 +71,7 @@ uint8_t IOExpander::analogRead(size_t pin) {
 }
 
 IOExpander::IOExpander(): 
-    states({0u, 0u, 0u, 0u})
+    states({0xff, 0xff, 0xff, 0xff})
 {
     // First, set all digital pins to output. This was Ctrl-V'd from tutorial
     Wire.beginTransmission(U2_ADDR);                  // Starts communication with MCP23017(U2) IC
@@ -105,4 +105,6 @@ IOExpander::IOExpander():
     */
     // Problems if you include it - just set in main file
     // pinMode(0, INPUT);                           // Set Analog Common I/O(Arduino Analog A0) to INPUT
+
+
 }
