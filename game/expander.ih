@@ -23,9 +23,11 @@ public:
     uint8_t analogRead(size_t pin);
 private:
     void analogSelect(size_t pin);
+    void init();
 };
 
 void IOExpander::set(size_t pin, bool newState) {
+    //log(String("Set ") + String(pin) + String(" ") + String(newState));
     if (pin < 16) {
         Wire.beginTransmission(u2);   // Select U2
         if (pin < 8) {
@@ -69,9 +71,7 @@ uint8_t IOExpander::analogRead(size_t pin) {
     return ar(0);           // The common reader pin
 }
 
-IOExpander::IOExpander(uint8_t addu2, uint8_t addu4):
-    states({0xff, 0xff, 0xff, 0xff}), u2(addu2), u4(addu4)
-{
+void IOExpander::init() {
     // First, set all digital pins to output. This was Ctrl-V'd from tutorial
     Wire.beginTransmission(u2);                  // Starts communication with MCP23017(U2) IC
     Wire.write(0x00);                              // Set MCP23017 memory pointer to IODIRA address
@@ -95,15 +95,11 @@ IOExpander::IOExpander(uint8_t addu2, uint8_t addu4):
     Wire.write(0x01);                              // Set MCP23017 memory pointer to IODIRB address
     Wire.write(0x00);                              // Set all PORTB pins to OUTPUT
     Wire.endTransmission();                        // Ends I2C communication with MCP23017(U4) IC
+}
 
-    /* 
-    *  The following code sets up I2C communication with MCP23017(U4), selects Bank 0 and set all PORTA pins as outputs.
-    *  This is because the select pins of 74HC4067 are driven through MCP23017(U4). Please refer MCP23017 datasheet for 
-    *  register addresses.
-    *  (Duplicate initialization code removed)
-    */
-    // Problems if you include it - just set in main file
-    // pinMode(0, INPUT);                           // Set Analog Common I/O(Arduino Analog A0) to INPUT
-
-
+IOExpander::IOExpander(uint8_t addu2, uint8_t addu4):
+    states({0xff, 0xff, 0xff, 0xff}), u2(addu2), u4(addu4)
+{
+    log("Starting"); // Critical for correct activation. Don't ask.
+    init();
 }

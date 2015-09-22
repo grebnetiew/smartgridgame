@@ -8,11 +8,10 @@
 int ar(int pin){
   return analogRead(pin);
 }
+void log(String message);
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\expander.ih"
 
 using namespace std;
-
-void log(String message);
 
 String nDigit(int i, size_t digits, char pad = '0') {
   if (digits == 1) {
@@ -54,6 +53,7 @@ void setup() {
   Serial.begin(9600);
   v->lcd.begin(16, 2); // This contains Wire.begin()
   v->lcd.createChar(0, euro);
+  v->expander.set(2,1);
 }
 
 void loop() {
