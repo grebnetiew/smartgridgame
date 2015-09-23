@@ -141,6 +141,7 @@ void BoardState::setLeds(CityState &state) {
         // leds 23-25 are for the lake
         exp.set(i + 23, ledLake == i);
     }
+    exp.update();
 }
 
 void BoardState::readButtons(CityState &state) {

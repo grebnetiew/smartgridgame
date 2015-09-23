@@ -82,6 +82,7 @@ void IOExpander::setDelayed(size_t pin, bool newState) {
 }
 
 void IOExpander::update() {
+    return; // Not needed with setImmediately
     Wire.beginTransmission(u2);   // Select U2
     Wire.write(0x13);             // Select PORTB
     Wire.write(states[0]);        // Write states
