@@ -9,6 +9,9 @@ String doubleDigit(int i) {
 }
 
 String nDigit(int i, size_t digits, char pad) {
+  if (i < 0) {
+    return "-" + nDigit(-i, digits, pad);
+  }
   if (digits == 1) {
     return String(i);
   }

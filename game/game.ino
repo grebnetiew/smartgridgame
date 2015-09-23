@@ -1,7 +1,3 @@
-// Addresses of the expander
-#define U2 0x21
-#define U4 0x22
-
 #include <Wire.h>
 #include <Adafruit_RGBLCDShield.h>
 
@@ -18,18 +14,18 @@ class Vars {
     IOExpander expander;
     CityState state;
     BoardState board;
-    Vars() : expander(U2, U4), state(), board(expander) {}
+    Vars() : expander(), state(), board(expander) {}
 };
 Vars *v;
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.ih"
 
 size_t minutes = 0;
+#define MIN_WRAP 12
 
 void setup() {
   // Initialize all classes for game and extender
   
   Serial.begin(9600);
-  Serial.print("hoi");
   v = new Vars();
   
   // Arduino setup phase
@@ -44,7 +40,7 @@ void setup() {
 }
 
 void loop() {
-  if(++minutes == 12) {
+  if(++minutes == MIN_WRAP) {
     minutes = 0;
     v->state.tick();
     v->board.setLeds(v->state);
@@ -69,7 +65,7 @@ void setLCD() {
   lcd.print(doubleDigit(v->state.d_time / 10));
   lcd.setCursor(13, 0);
   lcd.print(":");
-  lcd.print(doubleDigit(v->state.d_time % 10 * 6 + minutes / 2)); // Does it make sense? No. Don't care though :)
+  lcd.print(doubleDigit(v->state.d_time % 10 * 6 + 6 * minutes / MIN_WRAP)); // Does it make sense? No. Don't care though :)
 
   // Print prijs
   lcd.setCursor(0, 0);
