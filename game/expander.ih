@@ -22,12 +22,21 @@ public:
     IOExpander(uint8_t addu2 = 0x20, uint8_t addu4 = 0x21);
     void set(size_t pin, bool state);
     uint8_t analogReadExt(size_t pin);
+    void update();
 private:
     void analogSelect(size_t pin);
+    void setImmediately(size_t pin, bool state);
+    void setDelayed(size_t pin, bool state);
     void init();
 };
 
 void IOExpander::set(size_t pin, bool newState) {
+    // Easily switch between slow/safe and fast/unsafe
+    setImmediately(pin, newState);
+}
+
+void IOExpander::setImmediately(size_t pin, bool newState) {
+    // Always connects so it's slow, but seems to work more reliably
     //log(String("Set ") + String(pin) + String(" ") + String(newState));
     if (pin < 16) {
         Wire.beginTransmission(u2);   // Select U2
@@ -37,7 +46,7 @@ void IOExpander::set(size_t pin, bool newState) {
             Wire.write(states[0]);      // Write states
         } else {
             pin -= 8;
-            //states[1] = newState ? states[1] | (1u << pin) : states[1] & ~(1u << pin);
+            states[1] = newState ? states[1] | (1u << pin) : states[1] & ~(1u << pin);
             Wire.write(0x12);           // Select PORTA
             Wire.write(states[1]);      // Write states
         }
@@ -45,12 +54,12 @@ void IOExpander::set(size_t pin, bool newState) {
         pin -= 16;
         Wire.beginTransmission(u4);   // Select U4
         if (pin < 8) {
-            //states[2] = newState ? states[2] | (1u << pin) : states[2] & ~(1u << pin);
+            states[2] = newState ? states[2] | (1u << pin) : states[2] & ~(1u << pin);
             Wire.write(0x13);           // Select PORTB
             Wire.write(states[2]);      // Write states
         } else {
             pin -= 4; // Only write the high ports of this register, the rest is analog
-            //states[3] = newState ? states[3] | (1u << pin) : states[3] & ~(1u << pin);
+            states[3] = newState ? states[3] | (1u << pin) : states[3] & ~(1u << pin);
             Wire.write(0x12);           // Select PORTA
             Wire.write(states[3]);      // Write states
         }
@@ -58,10 +67,46 @@ void IOExpander::set(size_t pin, bool newState) {
     Wire.endTransmission();
 }
 
+void IOExpander::setDelayed(size_t pin, bool newState) {
+    // The faster, not so safe version
+    if (pin < 8) {
+        states[0] = newState ? states[0] | (1u << pin) : states[0] & ~(1u << pin);
+    } else if (pin < 16) {
+        states[1] = newState ? states[1] | (1u << pin - 8) : states[1] & ~(1u << pin - 8);
+    } else if (pin < 24) {
+        states[2] = newState ? states[2] | (1u << pin - 16) : states[2] & ~(1u << pin - 16);
+    } else {
+        // Only write the high ports of this register, the rest is analog
+        states[3] = newState ? states[3] | (1u << pin - 20) : states[3] & ~(1u << pin - 20);
+    }
+}
+
+void IOExpander::update() {
+    Wire.beginTransmission(u2);   // Select U2
+    Wire.write(0x13);             // Select PORTB
+    Wire.write(states[0]);        // Write states
+    Wire.endTransmission();
+
+    Wire.beginTransmission(u2);   // Select U2
+    Wire.write(0x12);             // Select PORTA
+    Wire.write(states[1]);        // Write states
+    Wire.endTransmission();
+
+    Wire.beginTransmission(u4);   // Select U2
+    Wire.write(0x13);             // Select PORTB
+    Wire.write(states[2]);        // Write states
+    Wire.endTransmission();
+
+    Wire.beginTransmission(u4);   // Select U2
+    Wire.write(0x12);             // Select PORTA
+    Wire.write(states[3]);        // Write states
+    Wire.endTransmission();
+}
+
 void IOExpander::analogSelect(size_t pin) {
     states[3] &= 0xF0;              // Clear the low bits
     states[3] |= pin & 0x0F;        // Set the low bits to which pin we want
-    Wire.beginTransmission(u4);   // Select U4
+    Wire.beginTransmission(u4);     // Select U4
     Wire.write(0x12);               // Select PORTA
     Wire.write(states[3]);          // Write states
     Wire.endTransmission();
