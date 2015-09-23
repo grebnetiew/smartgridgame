@@ -1,6 +1,6 @@
 void log(String message) {
-  v->lcd.setCursor(0, 0);
-  v->lcd.print(message + String(" "));
+  lcd.setCursor(0, 0);
+  lcd.print(message + String(" "));
   delay(1000);
 }
 

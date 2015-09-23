@@ -14,9 +14,9 @@
 
 class IOExpander {
 public:
-    uint8_t states[4];
     uint8_t u2;
     uint8_t u4;
+    uint8_t states[4];
 
 public:
     IOExpander(uint8_t addu2 = 0x20, uint8_t addu4 = 0x21);
@@ -32,7 +32,8 @@ private:
 
 void IOExpander::set(size_t pin, bool newState) {
     // Easily switch between slow/safe and fast/unsafe
-    setImmediately(pin, newState);
+    //setImmediately(pin, newState);
+    setDelayed(pin, newState);
 }
 
 void IOExpander::setImmediately(size_t pin, bool newState) {
@@ -82,7 +83,7 @@ void IOExpander::setDelayed(size_t pin, bool newState) {
 }
 
 void IOExpander::update() {
-    return; // Not needed with setImmediately
+    //return; // Not needed with setImmediately
     Wire.beginTransmission(u2);   // Select U2
     Wire.write(0x13);             // Select PORTB
     Wire.write(states[0]);        // Write states
@@ -145,8 +146,7 @@ void IOExpander::init() {
 }
 
 IOExpander::IOExpander(uint8_t addu2, uint8_t addu4):
-    states({0xff, 0xff, 0xff, 0xff}), u2(addu2), u4(addu4)
+    u2(addu2), u4(addu4), states({0xff, 0xff, 0xff, 0xff})
 {
-    log("Starting"); // Critical for correct activation. Don't ask.
     init();
 }

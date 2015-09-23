@@ -12,13 +12,13 @@ using namespace std;
  
 // It seems problematic to have global class-type objects, so we just make a pointer
 // to a collection of objects.
+Adafruit_RGBLCDShield lcd;
 class Vars {
   public:
-    Adafruit_RGBLCDShield lcd;
     IOExpander expander;
     CityState state;
     BoardState board;
-    Vars() : lcd(), expander(U2, U4), state(), board(expander) {}
+    Vars() : expander(U2, U4), state(), board(expander) {}
 };
 Vars *v;
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.ih"
@@ -27,16 +27,20 @@ size_t minutes = 0;
 
 void setup() {
   // Initialize all classes for game and extender
+  
+  Serial.begin(9600);
+  Serial.print("hoi");
   v = new Vars();
   
   // Arduino setup phase
   pinMode(A0, INPUT);
-  Serial.begin(9600);
-  v->lcd.begin(16, 2); // This contains Wire.begin()
+  lcd.begin(16, 2); // This contains Wire.begin()
 
   // Euro glyph
   static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
-  v->lcd.createChar(0, euro);
+  lcd.createChar(0, euro);
+  
+  log(" "); // Critical for correct activation. Don't ask.
 }
 
 void loop() {
@@ -61,21 +65,21 @@ void updateScores() {
 
 void setLCD() {  
   // Print tijd
-  v->lcd.setCursor(11, 0);
-  v->lcd.print(doubleDigit(v->state.d_time / 10));
-  v->lcd.setCursor(13, 0);
-  v->lcd.print(":");
-  v->lcd.print(doubleDigit(v->state.d_time % 10 * 6 + minutes / 2)); // Does it make sense? No. Don't care though :)
+  lcd.setCursor(11, 0);
+  lcd.print(doubleDigit(v->state.d_time / 10));
+  lcd.setCursor(13, 0);
+  lcd.print(":");
+  lcd.print(doubleDigit(v->state.d_time % 10 * 6 + minutes / 2)); // Does it make sense? No. Don't care though :)
 
   // Print prijs
-  v->lcd.setCursor(0, 0);
-  v->lcd.write(0); // euro
-  v->lcd.print(" ");
-  v->lcd.print(v->state.d_price);
+  lcd.setCursor(0, 0);
+  lcd.write(0); // euro
+  lcd.print(" ");
+  lcd.print(v->state.d_price);
 
   // Print score
-  v->lcd.setCursor(0, 1);
-  v->lcd.print("Score:     ");
-  v->lcd.print(nDigit(v->state.d_score, 5, ' '));
+  lcd.setCursor(0, 1);
+  lcd.print("Score:     ");
+  lcd.print(nDigit(v->state.d_score, 5, ' '));
 }
 
