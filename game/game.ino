@@ -1,32 +1,17 @@
-#include <Wire.h>
-
 // Addresses of the expander
 #define U2 0x21
 #define U4 0x22
 
+#include <Wire.h>
 #include <Adafruit_RGBLCDShield.h>
-int ar(int pin){
-  return analogRead(pin);
-}
-void log(String message);
+
+#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.h"
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\expander.ih"
-
-using namespace std;
-
-String nDigit(int i, size_t digits, char pad = '0') {
-  if (digits == 1) {
-    return String(i);
-  }
-  return i >= pow(10, digits - 1) ? String(i) : String(pad) + nDigit(i, digits - 1, pad);
-}
-
-
-String doubleDigit(int i) {
-  return nDigit(i, 2);
-}
-
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\state.ih"
-
+using namespace std;
+ 
+// It seems problematic to have global class-type objects, so we just make a pointer
+// to a collection of objects.
 class Vars {
   public:
     Adafruit_RGBLCDShield lcd;
@@ -35,23 +20,22 @@ class Vars {
     BoardState board;
     Vars() : lcd(), expander(U2, U4), state(), board(expander) {}
 };
-
 Vars *v;
-size_t minutes = 0;
-static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
+#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.ih"
 
-void log(String message) {
-  v->lcd.setCursor(0, 0);
-  v->lcd.print(message + String(" "));
-  delay(1000);
-}
+size_t minutes = 0;
 
 void setup() {
+  // Initialize all classes for game and extender
   v = new Vars();
+  
   // Arduino setup phase
   pinMode(A0, INPUT);
   Serial.begin(9600);
   v->lcd.begin(16, 2); // This contains Wire.begin()
+
+  // Euro glyph
+  static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
   v->lcd.createChar(0, euro);
 }
 
@@ -85,7 +69,7 @@ void setLCD() {
 
   // Print prijs
   v->lcd.setCursor(0, 0);
-  v->lcd.write(0);
+  v->lcd.write(0); // euro
   v->lcd.print(" ");
   v->lcd.print(v->state.d_price);
 

@@ -10,6 +10,7 @@
 // The analog pins are input only, 16 times. These will be buttons. 
 
 #include <stdint.h>
+#include <Arduino.h>
 
 class IOExpander {
 public:
@@ -20,7 +21,7 @@ public:
 public:
     IOExpander(uint8_t addu2 = 0x20, uint8_t addu4 = 0x21);
     void set(size_t pin, bool state);
-    uint8_t analogRead(size_t pin);
+    uint8_t analogReadExt(size_t pin);
 private:
     void analogSelect(size_t pin);
     void init();
@@ -66,9 +67,9 @@ void IOExpander::analogSelect(size_t pin) {
     Wire.endTransmission();
 }
 
-uint8_t IOExpander::analogRead(size_t pin) {
+uint8_t IOExpander::analogReadExt(size_t pin) {
     analogSelect(pin);
-    return ar(0);           // The common reader pin
+    return analogRead(0);           // The common reader pin
 }
 
 void IOExpander::init() {
