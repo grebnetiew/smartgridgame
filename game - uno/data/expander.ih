@@ -1,0 +1,100 @@
+// We now setup the IO expander
+// This means we have to set the pins to their respective functions
+// These are defined here
+
+// The layout is as follows (digital io):
+//  0- 7 PORTB of U2
+//  8-15 PORTA of U2
+// 16-23 PORTB of U4
+// 24-27 PORTA of U4 (only connectors 4-7, the others select analogread addr)
+// The analog pins are input only, 16 times. These will be buttons. 
+
+class IOExpander {
+    uint_8[4] states = {0u, 0u, 0u, 0u};
+
+public:
+    IOExpander();
+    void set(size_t pin, bool state);
+    uint_8 analogRead(size_t pin);
+private:
+    void analogSelect(size_t pin);
+}
+
+void IOExpander::set(size_t pin, bool newState) {
+    if (pin < 16) {
+        Wire.beginTransmission(0x20);   // Select U2
+        if (pin < 8) {
+            states[0] = newState ? states[0] | (1u << pin) : states[0] & ~(1u << pin);
+            Wire.write(0x13);           // Select PORTB
+            Wire.write(states[0]);      // Write states
+        } else {
+            pin -= 8;
+            states[1] = newState ? states[1] | (1u << pin) : states[1] & ~(1u << pin);
+            Wire.write(0x12);           // Select PORTA
+            Wire.write(states[1]);      // Write states
+        }
+    } else {
+        pin -= 16;
+        Wire.beginTransmission(0x21);   // Select U4
+        if (pin < 8) {
+            states[2] = newState ? states[2] | (1u << pin) : states[2] & ~(1u << pin);
+            Wire.write(0x13);           // Select PORTB
+            Wire.write(states[2]);      // Write states
+        } else {
+            pin -= 4; // Only write the high ports of this register, the rest is analog
+            states[3] = newState ? states[3] | (1u << pin) : states[3] & ~(1u << pin);
+            Wire.write(0x12);           // Select PORTA
+            Wire.write(states[3]);      // Write states
+        }
+    }
+    Wire.endTransmission();
+}
+
+void IOExpander::analogSelect(size_t pin) {
+    states[3] &= 0xF0;              // Clear the low bits
+    states[3] |= pin & 0x0F;        // Set the low bits to which pin we want
+    Wire.beginTransmission(0x21);   // Select U4
+    Wire.write(0x12);               // Select PORTA
+    Wire.write(states[3]);          // Write states
+    Wire.endTransmission();
+}
+
+uint_8 IOExpander::analogRead(size_t pin) {
+    analogSelect(pin);
+    return analogRead(0);           // The common reader pin
+}
+
+IOExpander::IOexpander() {
+    // First, set all digital pins to output. This was Ctrl-V'd from tutorial
+    Wire.beginTransmission(0x20);                  // Starts communication with MCP23017(U2) IC
+    Wire.write(0x00);                              // Set MCP23017 memory pointer to IODIRA address
+    Wire.write(0x00);                              // Set all pins of PORTA to outputs
+    Wire.endTransmission();                        // Ends I2C communication with MCP23017(U2) IC
+
+    Wire.beginTransmission(0x20);                  // Starts communication with MCP23017(U2) IC
+    Wire.write(0x01);                              // Set MCP23017 memory pointer to IODIRB address
+    Wire.write(0x00);                              // Set all pins of PORTB to outputs
+    Wire.endTransmission();                        // Ends I2C communication with MCP23017(U2) IC
+    /* 
+    *  The following code starts I2C communication with MCP23017(U4).Please refer MCP23017 datasheet
+    *  for register addresses. Sets all GPIOs of this IC to OUTPUT 
+    */
+    Wire.beginTransmission(0x21);                  // Starts communication with MCP23017(U4) IC
+    Wire.write(0x00);                              // Set MCP23017 memory pointer to IODIRA address
+    Wire.write(0x00);                              // Set all PORTA pins to OUTPUT
+    Wire.endTransmission();                        // Ends I2C communication with MCP23017(U4) IC
+
+    Wire.beginTransmission(0x21);                  // Starts communication with MCP23017(U4) IC
+    Wire.write(0x01);                              // Set MCP23017 memory pointer to IODIRB address
+    Wire.write(0x00);                              // Set all PORTB pins to OUTPUT
+    Wire.endTransmission();                        // Ends I2C communication with MCP23017(U4) IC
+
+    /* 
+    *  The following code sets up I2C communication with MCP23017(U4), selects Bank 0 and set all PORTA pins as outputs.
+    *  This is because the select pins of 74HC4067 are driven through MCP23017(U4). Please refer MCP23017 datasheet for 
+    *  register addresses.
+    *  (Duplicate initialization code removed)
+    */
+
+    pinMode(0, INPUT);                             // Set Analog Common I/O(Arduino Analog A0) to INPUT
+}
