@@ -7,10 +7,10 @@ void CityState::tick() {
     }
     d_solar_power = solar_power();
 
-    d_city_usage[0] = base_usage() / d_price * 0.7;
-    d_city_usage[1] = base_usage() / d_price * 1.3;
-    d_city_usage[2] = base_usage() / d_price * 1.1;
-    d_city_usage[3] = base_usage() / d_price * 0.9;
+    d_city_usage[0] = base_usage(0)  / d_price * 0.7;
+    d_city_usage[1] = base_usage(-1) / d_price * 1.3;
+    d_city_usage[2] = base_usage(0)  / d_price * 1.1;
+    d_city_usage[3] = base_usage(2)  / d_price * 0.9;
 
     d_city_supply[0] = d_coal_power - d_link_delta[0] - d_link_delta[1];
     d_city_supply[1] = d_link_delta[0] - d_link_delta[2] - d_link_delta[3];
@@ -82,14 +82,14 @@ void CityState::processButton(size_t btn) {
     }
 }
 
-size_t CityState::base_usage() {
-    static size_t usage[24] = {13, 12, 11, 9, 7, 7, 8, 12, 13, 12,
-        12, 11, 10, 10, 9, 9, 10, 12, 16, 17, 17, 16, 14, 14};
-    return usage[d_time / 10];
+static size_t function_usage[24] = {13, 12, 11, 9, 7, 7, 8, 12, 13, 12,
+    12, 11, 10, 10, 9, 9, 10, 12, 16, 17, 17, 16, 14, 14};
+inline size_t CityState::base_usage(int delta) {
+    return function_usage[(delta / 10 + delta + 24) % 24];
 }
 
-size_t CityState::solar_power() {
-    static size_t power[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0,
-        3, 6, 8, 9, 9, 8, 6, 3, 0, 0, 0, 0, 0, 0, 0};
-    return power[d_time / 10];
+static size_t function_power[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0,
+    3, 6, 8, 9, 9, 8, 6, 3, 0, 0, 0, 0, 0, 0, 0};
+inline size_t CityState::solar_power() {
+    return function_power[d_time / 10];
 }
