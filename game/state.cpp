@@ -66,10 +66,10 @@ void CityState::processButton(size_t btn) {
 
     // 10 (-), 11 are the production
     if (btn == 10 && d_coal_power > 0) {
-        d_coal_power -= 10;
+        d_coal_power -= COAL_MAX / 2;
     }
-    if (btn == 11 && d_coal_power < 50) {
-        d_coal_power += 10;
+    if (btn == 11 && d_coal_power < COAL_MAX) {
+        d_coal_power += COAL_MAX / 2;
     }
 
     // 12 (-), 13 are the price

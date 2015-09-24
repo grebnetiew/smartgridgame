@@ -3,6 +3,7 @@
 #include "expander.h"
 
 const int LAKE_MAX = 500;
+const int COAL_MAX = 50;
 
 class CityState {
     // City uses a fixed graph with 4 vertices
@@ -12,8 +13,8 @@ public: // yeah yeah
     int     d_link_delta[5] = {10, 0, 0, 0, -10};
     int     d_city_usage[4] = {10, 10, 10, 10};
     int     d_city_supply[4] = {10, 10, 10, 10};
-    size_t  d_solar_power = 20;  // to city 3
-    size_t  d_coal_power = 20;   // to city 0
+    size_t  d_solar_power = 0;             // to city 3
+    size_t  d_coal_power = COAL_MAX / 2;   // to city 0
     size_t  d_lake_contents = 0;
     double  d_price = 1.0;
     size_t  d_score = 0;

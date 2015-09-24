@@ -17,8 +17,8 @@ void BoardState::setLeds(CityState const &state) {
                      (delta <= 20) ? 3 : 4;
     }
 
-    ledCoal = (state.d_coal_power <= 20) ? 0 :
-              (state.d_coal_power <= 40) ? 1 : 2;
+    ledCoal = (state.d_coal_power <=   COAL_MAX/3) ? 0 :
+              (state.d_coal_power <= 2*COAL_MAX/3) ? 1 : 2;
 
     ledLake = (state.d_lake_contents <= 0.3 * LAKE_MAX) ? 0 :
               (state.d_lake_contents <= 0.7 * LAKE_MAX) ? 1 : 2;
