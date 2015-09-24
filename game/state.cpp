@@ -1,24 +1,4 @@
-#include <stdio.h>
-
-class CityState {
-    // City uses a fixed graph with 4 vertices
-    // and links (0,1), (0,2), (1,2), (1,3), (2,3)
-public: // yeah yeah
-    size_t  d_time = 0;
-    int     d_link_delta[5] = {10, 0, 0, 0, -10};
-    int     d_city_usage[4] = {10, 10, 10, 10};
-    int     d_city_supply[4] = {10, 10, 10, 10};
-    size_t  d_solar_power = 20;  // to city 3
-    size_t  d_coal_power = 20;   // to city 0
-    size_t  d_lake_contents = 0;
-    double  d_price = 1.0;
-    size_t  d_score = 0;
-
-    void tick();
-    void processButton(size_t btn);
-    size_t base_usage();
-    size_t solar_power();
-};
+#include "state.h"
 
 void CityState::tick() {
     if(++d_time == 240) {
@@ -111,67 +91,4 @@ size_t CityState::solar_power() {
     static size_t power[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0,
         3, 6, 8, 9, 9, 8, 6, 3, 0, 0, 0, 0, 0, 0, 0};
     return power[d_time / 10];
-}
-
-class BoardState {
-public:
-    int ledCity[4];
-    int ledCoal = 0;
-    int ledLake = 0;
-    bool buttonPressed[14]; // Prevent double presses
-
-    IOExpander &exp;
-
-    BoardState(IOExpander &e);
-    void setLeds(CityState const &state);
-    void readButtons(CityState &state);
-};
-
-BoardState::BoardState(IOExpander &e):
-    ledCity({2, 2, 2, 2}),
-    exp(e)
-{
-    memset(buttonPressed, 0, sizeof(buttonPressed));
-}
-
-void BoardState::setLeds(CityState const &state) {
-    // Update the city led states
-    for (size_t i = 0; i != 4; ++i) {
-        int delta = state.d_city_supply[i] - state.d_city_usage[i];
-        ledCity[i] = (delta < -20) ? 0 :
-                     (delta < -5)  ? 1 :
-                     (delta <= 5)  ? 2 :
-                     (delta <= 20) ? 3 : 4;
-    }
-
-    ledCoal = (state.d_coal_power <= 20) ? 0 :
-              (state.d_coal_power <= 40) ? 1 : 2;
-
-    ledLake = (state.d_lake_contents <= 150) ? 0 :
-              (state.d_lake_contents <= 350) ? 1 : 2;
-
-    // City 1 has leds 0-4, 2 has 5-9 etc ...15-19
-    for (size_t i = 0; i != 5; ++i) {
-        exp.set(i,      ledCity[0] == i);
-        exp.set(i + 5,  ledCity[1] == i);
-        exp.set(i + 10, ledCity[2] == i);
-        exp.set(i + 15, ledCity[3] == i);
-    }
-    for (size_t i = 0; i != 3; ++i) {
-        // leds 20-22 are for power production
-        exp.set(i + 20, ledCoal == i);
-        // leds 23-25 are for the lake
-        exp.set(i + 23, ledLake == i);
-    }
-    exp.update();
-}
-
-void BoardState::readButtons(CityState &state) {
-    for (size_t i = 0; i != 14; ++i) {
-        bool pressed = exp.digitalReadExt(i);
-        if (pressed && !buttonPressed[i]) {
-            state.processButton(i);
-        }
-        buttonPressed[i] = pressed;
-    }
 }

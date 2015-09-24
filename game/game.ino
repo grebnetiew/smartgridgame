@@ -2,10 +2,10 @@
 #include <Adafruit_RGBLCDShield.h>
 Adafruit_RGBLCDShield lcd;
 
-#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\expander.ih"
-#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\state.ih"
-#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.ih"
- 
+#include "expander.h"
+#include "state.h"
+#include "util.h"
+
 // It seems problematic to have global class-type objects, so we just make a pointer
 // to a collection of objects.
 IOExpander expander;
