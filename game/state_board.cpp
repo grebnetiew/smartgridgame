@@ -38,7 +38,7 @@ void BoardState::setLeds(CityState const &state) {
     }
 }
 
-void BoardState::updateScores(CityState &state) {
+void BoardState::updateScores(CityState &state) const {
   state.d_score += (ledCoal == 1 ? 20 : 0) +
     (ledCity[0] == 2 ? 3 : (ledCity[0] == 1 || ledCity[0] == 3) ? -1 : -5) +
     (ledCity[1] == 2 ? 3 : (ledCity[1] == 1 || ledCity[1] == 3) ? -1 : -5) +

@@ -23,9 +23,9 @@ public: // yeah yeah
 
     void tick();
     void processButton(size_t btn);
-    int  base_usage(int delta = 0);
-    int  solar_power();
-    void debugPrint();
+    int  base_usage(int delta = 0) const;
+    int  solar_power() const;
+    void debugPrint() const;
 };
 
 class BoardState {
@@ -39,6 +39,6 @@ public:
 
     BoardState(IOExpander &e);
     void setLeds(CityState const &state);
-    void updateScores(CityState &state);
+    void updateScores(CityState &state) const;
     void readButtons(CityState &state);
 };
