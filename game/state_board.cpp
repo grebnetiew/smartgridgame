@@ -11,10 +11,10 @@ void BoardState::setLeds(CityState const &state) {
     // Update the city led states
     for (size_t i = 0; i != 4; ++i) {
         int delta = state.d_city_supply[i] - state.d_city_usage[i];
-        ledCity[i] = (delta < -20) ? 0 :
-                     (delta < -5)  ? 1 :
-                     (delta <= 5)  ? 2 :
-                     (delta <= 20) ? 3 : 4;
+        ledCity[i] = (delta < -4 * SENSITIVITY) ? 0 :
+                     (delta < -1 * SENSITIVITY) ? 1 :
+                     (delta <=     SENSITIVITY) ? 2 :
+                     (delta <= 4 * SENSITIVITY) ? 3 : 4;
     }
 
     ledCoal = (state.d_coal_power <=   COAL_MAX/3) ? 0 :

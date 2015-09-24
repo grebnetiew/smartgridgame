@@ -34,8 +34,8 @@ void loop() {
     state.tick();
     board.setLeds(state);
     updateScores();
-    setLCD();
   }
+  setLCD();
 }
 
 void updateScores() {

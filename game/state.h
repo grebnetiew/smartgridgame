@@ -2,8 +2,9 @@
 #include <Arduino.h>
 #include "expander.h"
 
-const int LAKE_MAX = 500;
-const int COAL_MAX = 50;
+const int LAKE_MAX    = 500; // Lake can hold this much power
+const int COAL_MAX    = 50;  // Maximum power plant gen
+const int SENSITIVITY = 5;   // City led turns yellow at this deficit/surplus
 
 class CityState {
     // City uses a fixed graph with 4 vertices
