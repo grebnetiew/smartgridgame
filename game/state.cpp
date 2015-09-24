@@ -37,13 +37,11 @@ void CityState::tick() {
         }
     }
 
-    char output[30];
+    char output[40];
     Serial.println("Tick: " + String(d_time));
-    sprintf(output, "%d (%d) %d (%d) %d", d_city_supply[0], d_link_delta[0],
-        d_city_supply[1], d_link_delta[3], d_city_supply[3]);
+    sprintf(output, "%d (%d) %d (%d) %d", d_city_supply[0], d_link_delta[0], d_city_supply[1], d_link_delta[3], d_city_supply[3]);
     Serial.println(output);
-    sprintf(output, "   (%d) (%d)  (%d)", d_link_delta[1], d_link_delta[2],
-        d_link_delta[4]);
+    sprintf(output, "   (%d) (%d)  (%d)", d_link_delta[1], d_link_delta[2], d_link_delta[4]);
     Serial.println(output);
     sprintf(output, "            %d    ", d_city_supply[2]);
     Serial.println(output);
