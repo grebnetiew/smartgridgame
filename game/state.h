@@ -23,8 +23,9 @@ public: // yeah yeah
 
     void tick();
     void processButton(size_t btn);
-    int     base_usage(int delta = 0);
-    int     solar_power();
+    int  base_usage(int delta = 0);
+    int  solar_power();
+    void debugPrint();
 };
 
 class BoardState {

@@ -36,7 +36,10 @@ void CityState::tick() {
             d_city_usage[2] = d_city_supply[2];
         }
     }
+    debugPrint();
+}
 
+void CityState::debugPrint() {
     char output[40];
     Serial.println("Tick: " + String(d_time));
     sprintf(output, "%d (%d) %d (%d) %d", d_city_supply[0], d_link_delta[0], d_city_supply[1], d_link_delta[3], d_city_supply[3]);
@@ -46,8 +49,7 @@ void CityState::tick() {
     sprintf(output, "            %d    ", d_city_supply[2]);
     Serial.println(output);
     Serial.println("Lake: " + String(d_lake_contents));
-    Serial.println("Power (solar + plant): " + String(d_solar_power) 
-        + " " + String(d_coal_power));
+    Serial.println("Power (solar + plant): " + String(d_solar_power) + " " + String(d_coal_power)); 
 }
 
 void CityState::processButton(size_t btn) {
