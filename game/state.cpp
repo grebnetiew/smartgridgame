@@ -55,14 +55,14 @@ void CityState::tick() {
 void CityState::processButton(size_t btn) {
     // 0 (-) and 1 (+) are for link 1, and so on (link 5 has 8, 9)
     if (btn < 10 && btn % 2 == 0) {
-        d_link_delta[btn / 2] -= 10;
-        if (d_link_delta[btn / 2] < -30)
-            d_link_delta[btn / 2] = -30;
+        d_link_delta[btn / 2] -= LINK_MAX / 3;
+        if (d_link_delta[btn / 2] < -LINK_MAX)
+            d_link_delta[btn / 2] = -LINK_MAX;
     }
     if (btn < 10 && btn % 2 == 1) {
-        d_link_delta[btn / 2] += 10;
-        if (d_link_delta[btn / 2] > 30)
-            d_link_delta[btn / 2] = 30;
+        d_link_delta[btn / 2] += LINK_MAX / 3;
+        if (d_link_delta[btn / 2] > LINK_MAX)
+            d_link_delta[btn / 2] = LINK_MAX;
     }
 
     // 10 (-), 11 are the production
@@ -82,14 +82,14 @@ void CityState::processButton(size_t btn) {
     }
 }
 
-static size_t function_usage[24] = {13, 12, 11, 9, 7, 7, 8, 12, 13, 12,
+static int function_usage[24] = {13, 12, 11, 9, 7, 7, 8, 12, 13, 12,
     12, 11, 10, 10, 9, 9, 10, 12, 16, 17, 17, 16, 14, 14};
-inline size_t CityState::base_usage(int delta) {
+inline int CityState::base_usage(int delta) {
     return function_usage[(delta / 10 + delta + 24) % 24];
 }
 
-static size_t function_power[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0,
+static int function_power[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0,
     3, 6, 8, 9, 9, 8, 6, 3, 0, 0, 0, 0, 0, 0, 0};
-inline size_t CityState::solar_power() {
+inline int CityState::solar_power() {
     return function_power[d_time / 10];
 }

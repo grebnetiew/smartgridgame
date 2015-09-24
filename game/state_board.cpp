@@ -38,6 +38,14 @@ void BoardState::setLeds(CityState const &state) {
     }
 }
 
+void BoardState::updateScores(CityState &state) {
+  state.d_score += (ledCoal == 1 ? 20 : 0) +
+    (ledCity[0] == 2 ? 3 : (ledCity[0] == 1 || ledCity[0] == 3) ? -1 : -5) +
+    (ledCity[1] == 2 ? 3 : (ledCity[1] == 1 || ledCity[1] == 3) ? -1 : -5) +
+    (ledCity[2] == 2 ? 3 : (ledCity[2] == 1 || ledCity[2] == 3) ? -1 : -5) +
+    (ledCity[3] == 2 ? 3 : (ledCity[3] == 1 || ledCity[3] == 3) ? -1 : -5);
+}
+
 void BoardState::readButtons(CityState &state) {
     for (size_t i = 0; i != 14; ++i) {
         bool pressed = exp.digitalReadExt(i);

@@ -33,20 +33,12 @@ void loop() {
     minutes = 0;
     state.tick();
     board.setLeds(state);
-    updateScores();
+    board.updateScores(state);
   }
-  setLCD();
+  updateLCD();
 }
 
-void updateScores() {
-  state.d_score += (board.ledCoal == 1 ? 20 : 0) +
-    (board.ledCity[0] == 2 ? 3 : (board.ledCity[0] == 1 || board.ledCity[0] == 3) ? -1 : -5) +
-    (board.ledCity[1] == 2 ? 3 : (board.ledCity[1] == 1 || board.ledCity[1] == 3) ? -1 : -5) +
-    (board.ledCity[2] == 2 ? 3 : (board.ledCity[2] == 1 || board.ledCity[2] == 3) ? -1 : -5) +
-    (board.ledCity[3] == 2 ? 3 : (board.ledCity[3] == 1 || board.ledCity[3] == 3) ? -1 : -5);
-}
-
-void setLCD() {  
+void updateLCD() {  
   // Print tijd
   lcd.setCursor(11, 0);
   lcd.print(doubleDigit(state.d_time / 10));
