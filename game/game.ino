@@ -17,9 +17,6 @@ const size_t MIN_WRAP = 12;
 
 void setup() {
   Serial.begin(9600);
-  
-  // Arduino setup phase
-  pinMode(A0, INPUT);
   lcd.begin(16, 2); // This contains Wire.begin()
 
   // Euro glyph
