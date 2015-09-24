@@ -123,7 +123,7 @@ public:
     IOExpander &exp;
 
     BoardState(IOExpander &e);
-    void setLeds(CityState &state);
+    void setLeds(CityState const &state);
     void readButtons(CityState &state);
 };
 
@@ -134,7 +134,7 @@ BoardState::BoardState(IOExpander &e):
     memset(buttonPressed, 0, sizeof(buttonPressed));
 }
 
-void BoardState::setLeds(CityState &state) {
+void BoardState::setLeds(CityState const &state) {
     // Update the city led states
     for (size_t i = 0; i != 4; ++i) {
         int delta = state.d_city_supply[i] - state.d_city_usage[i];
