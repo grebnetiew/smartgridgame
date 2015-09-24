@@ -37,8 +37,10 @@ bool tobias = false;
 void loop() {
   IOExpander expa(0x21, 0x22);
   for(size_t i = 0; i != 5; ++i) {
+    log(String(i));
     for(size_t j = 0; j != 28; ++j) {
       expa.set(j, i == j);
+      expa.update();
     }
     delay(1000);
   }

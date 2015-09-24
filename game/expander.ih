@@ -14,7 +14,7 @@ class IOExpander {
 public:
     IOExpander();
     void set(size_t pin, bool state);
-    uint8_t analogReadExt(uint8_t pin);
+    bool digitalReadExt(uint8_t pin);
     void update();
 };
 
@@ -24,8 +24,8 @@ inline void IOExpander::set(size_t pin, bool newState) {
 
 inline void IOExpander::update() {}
 
-inline uint8_t IOExpander::analogReadExt(uint8_t pin) {
-    return digitalRead(pin + 14) == HIGH ? 0xFF : 0x00;
+inline bool IOExpander::digitalReadExt(uint8_t pin) {
+    return digitalRead(pin + 14) == HIGH;
 }
 
 IOExpander::IOExpander()

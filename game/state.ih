@@ -168,7 +168,7 @@ void BoardState::setLeds(CityState &state) {
 
 void BoardState::readButtons(CityState &state) {
     for (size_t i = 0; i != 14; ++i) {
-        bool pressed = exp.analogReadExt(i) > 0x80;
+        bool pressed = exp.digitalReadExt(i);
         if (pressed && !buttonPressed[i]) {
             state.processButton(i);
         }
