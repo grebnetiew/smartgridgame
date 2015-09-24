@@ -27,9 +27,9 @@ void CityState::tick() {
             d_city_supply[2] = d_city_usage[2];
         }
     } else { // Give to lake
-        if (d_city_supply[2] - d_city_usage[2] + d_lake_contents > 500) { // it will be full
+        if (d_city_supply[2] - d_city_usage[2] + d_lake_contents > LAKE_MAX) { // it will be full
             d_city_supply[2] -= 500 - d_lake_contents;
-            d_lake_contents = 500;
+            d_lake_contents = LAKE_MAX;
         } else {
             d_lake_contents += d_city_supply[2] - d_city_usage[2];
             d_city_supply[2] = d_city_usage[2];

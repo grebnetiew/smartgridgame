@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include "expander.h"
 
+const int LAKE_MAX = 500;
+
 class CityState {
     // City uses a fixed graph with 4 vertices
     // and links (0,1), (0,2), (1,2), (1,3), (2,3)

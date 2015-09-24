@@ -20,8 +20,8 @@ void BoardState::setLeds(CityState const &state) {
     ledCoal = (state.d_coal_power <= 20) ? 0 :
               (state.d_coal_power <= 40) ? 1 : 2;
 
-    ledLake = (state.d_lake_contents <= 150) ? 0 :
-              (state.d_lake_contents <= 350) ? 1 : 2;
+    ledLake = (state.d_lake_contents <= 0.3 * LAKE_MAX) ? 0 :
+              (state.d_lake_contents <= 0.7 * LAKE_MAX) ? 1 : 2;
 
     // City 1 has leds 0-4, 2 has 5-9 etc ...15-19
     for (size_t i = 0; i != 5; ++i) {
@@ -36,7 +36,6 @@ void BoardState::setLeds(CityState const &state) {
         // leds 23-25 are for the lake
         exp.set(i + 23, ledLake == i);
     }
-    exp.update();
 }
 
 void BoardState::readButtons(CityState &state) {
