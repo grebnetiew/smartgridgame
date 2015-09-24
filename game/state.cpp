@@ -1,5 +1,27 @@
 #include "state.h"
 
+CityState::CityState() {
+    init();
+}
+
+void CityState::init() {
+    d_time          = 0;
+    d_link_delta[0] = 10;
+    d_link_delta[1] = 0;
+    d_link_delta[2] = 0;
+    d_link_delta[3] = 0;
+    d_link_delta[4] = -10;
+    for (size_t i = 0; i != 4; ++i) {
+        d_city_usage[i]  = 10;
+        d_city_supply[i] = 10;
+    }
+    d_solar_power   = 0;             // to city 3
+    d_coal_power    = COAL_MAX / 2;   // to city 0
+    d_lake_contents = 0;
+    d_price         = 1.0;
+    d_score         = 0;
+}
+
 void CityState::tick() {
     if(++d_time == 240) {
         d_time = 0;

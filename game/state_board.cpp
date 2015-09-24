@@ -24,13 +24,13 @@ void BoardState::setLeds(CityState const &state) {
               (state.d_lake_contents <= 0.7 * LAKE_MAX) ? 1 : 2;
 
     // City 1 has leds 0-4, 2 has 5-9 etc ...15-19
-    for (size_t i = 0; i != 5; ++i) {
+    for (int i = 0; i != 5; ++i) {
         exp.set(i,      ledCity[0] == i);
         exp.set(i + 5,  ledCity[1] == i);
         exp.set(i + 10, ledCity[2] == i);
         exp.set(i + 15, ledCity[3] == i);
     }
-    for (size_t i = 0; i != 3; ++i) {
+    for (int i = 0; i != 3; ++i) {
         // leds 20-22 are for power production
         exp.set(i + 20, ledCoal == i);
         // leds 23-25 are for the lake
