@@ -38,5 +38,5 @@ struct BoardState {
     BoardState(IOExpander &e);
     void setLeds(CityState const &state);
     void updateScores(CityState &state) const;
-    void readButtons(CityState &state);
+    void readAndProcessButtons(CityState &state);
 };

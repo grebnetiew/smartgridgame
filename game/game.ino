@@ -28,7 +28,7 @@ void setup() {
 }
 
 void loop() {
-  board.readButtons(state);
+  board.readAndProcessButtons(state);
   if(++minutes == MIN_WRAP) {
     minutes = 0;
     state.tick();

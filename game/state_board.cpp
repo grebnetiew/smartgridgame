@@ -46,7 +46,7 @@ void BoardState::updateScores(CityState &state) const {
     (ledCity[3] == 2 ? 3 : (ledCity[3] == 1 || ledCity[3] == 3) ? -1 : -5);
 }
 
-void BoardState::readButtons(CityState &state) {
+void BoardState::readAndProcessButtons(CityState &state) {
     for (size_t i = 0; i != 14; ++i) {
         bool pressed = exp.digitalReadExt(i);
         if (pressed && !buttonPressed[i]) {
