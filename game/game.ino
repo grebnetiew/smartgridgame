@@ -1,22 +1,19 @@
 #include <Wire.h>
 #include <Adafruit_RGBLCDShield.h>
+Adafruit_RGBLCDShield lcd;
 
-#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.h"
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\expander.ih"
 #include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\state.ih"
-using namespace std;
+#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.ih"
  
 // It seems problematic to have global class-type objects, so we just make a pointer
 // to a collection of objects.
-Adafruit_RGBLCDShield lcd;
 IOExpander expander;
 CityState state;
 BoardState board(expander);
 
-#include "c:\Users\p250644\Documents\PhD\etc\festival-grrn\game\util.ih"
-
 size_t minutes = 0;
-#define MIN_WRAP 12
+const size_t MIN_WRAP = 12;
 
 void setup() {
   Serial.begin(9600);
@@ -28,8 +25,6 @@ void setup() {
   // Euro glyph
   static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
   lcd.createChar(0, euro);
-  
-  log(" "); // Critical for correct activation. Don't ask.
 }
 
 void loop() {
