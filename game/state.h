@@ -7,10 +7,9 @@ const int COAL_MAX    = 50;  // Maximum power plant gen
 const int SENSITIVITY = 5;   // City led turns yellow at this deficit/surplus
 const int LINK_MAX    = 30;  // Max. power transport over link
 
-class CityState {
+struct CityState {
     // City uses a fixed graph with 4 vertices
     // and links (0,1), (0,2), (1,2), (1,3), (2,3)
-public: // yeah yeah
     size_t  d_time = 0;
     int     d_link_delta[5] = {10, 0, 0, 0, -10};
     int     d_city_usage[4] = {10, 10, 10, 10};
@@ -28,8 +27,7 @@ public: // yeah yeah
     void debugPrint() const;
 };
 
-class BoardState {
-public:
+struct BoardState {
     int ledCity[4];
     int ledCoal = 0;
     int ledLake = 0;
