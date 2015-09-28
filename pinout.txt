@@ -7,3 +7,5 @@ power plant, then three to the dam.
 
 Currently, some analog pins are used for a pair of buttons. This is a temporary measure
 to compensate for a wiring difficulty, and should be reverted soon.
+
+The cities are numbered in reading order, left to right then top to bottom. Links likewise.
