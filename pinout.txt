@@ -1,0 +1,9 @@
+The Display is connected to the first few digital and analog pins.
+A set of headers is needed for this, as you need the 3.3V pin.
+
+Connect digital pins 14--27 to the buttons. Pin 14 and 15 go with the first link, etc.
+The other pins are for LEDs. Groups of five go to the cities, then three to the
+power plant, then three to the dam.
+
+Currently, some analog pins are used for a pair of buttons. This is a temporary measure
+to compensate for a wiring difficulty, and should be reverted soon.
