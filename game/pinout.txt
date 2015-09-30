@@ -9,3 +9,8 @@ Currently, some analog pins are used for a pair of buttons. This is a temporary 
 to compensate for a wiring difficulty, and should be reverted soon.
 
 The cities are numbered in reading order, left to right then top to bottom. Links likewise.
+
+Wire colors are:
+  Green for the power plant,
+  Grey for the pricing,
+  Purple west, white north, black center, brown east, yellow south.
