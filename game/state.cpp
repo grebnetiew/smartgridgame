@@ -74,17 +74,23 @@ void CityState::debugPrint() const {
     Serial.println("Power (solar + plant): " + String(d_solar_power) + " " + String(d_coal_power)); 
 }
 
+static int button_mult[5] = {-1, -1, 1, 1, -1};
+
 void CityState::processButton(size_t btn) {
     // 0 (-) and 1 (+) are for link 1, and so on (link 5 has 8, 9)
     if (btn < 10 && btn % 2 == 0) {
-        d_link_delta[btn / 2] -= LINK_MAX / 3;
+        d_link_delta[btn / 2] -= LINK_MAX / 3 * button_mult[btn/2];
         if (d_link_delta[btn / 2] < -LINK_MAX)
             d_link_delta[btn / 2] = -LINK_MAX;
+        if (d_link_delta[btn / 2] >  LINK_MAX)
+            d_link_delta[btn / 2] =  LINK_MAX;
     }
     if (btn < 10 && btn % 2 == 1) {
-        d_link_delta[btn / 2] += LINK_MAX / 3;
-        if (d_link_delta[btn / 2] > LINK_MAX)
-            d_link_delta[btn / 2] = LINK_MAX;
+        d_link_delta[btn / 2] += LINK_MAX / 3 * button_mult[btn/2];
+        if (d_link_delta[btn / 2] >  LINK_MAX)
+            d_link_delta[btn / 2] =  LINK_MAX;
+        if (d_link_delta[btn / 2] < -LINK_MAX)
+            d_link_delta[btn / 2] = -LINK_MAX;
     }
 
     // 10 (-), 11 are the production
