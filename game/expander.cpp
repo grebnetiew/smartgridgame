@@ -12,3 +12,12 @@ IOExpander::IOExpander()
         pinMode(i, OUTPUT);
     }
 }
+
+
+bool IOExpander::digitalReadExt(uint8_t pin) {
+    if (pin == 6 || pin == 7) {
+        return analogRead(pin + 3) > 500;
+    }
+    return digitalRead(pin + 14) == HIGH;
+}
+
