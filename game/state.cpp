@@ -40,22 +40,22 @@ void CityState::tick() {
     d_city_supply[3] = d_solar_power + d_link_delta[3] + d_link_delta[4];
 
     // Deal with the lake
-    int surplus2 = d_city_supply[2] - d_city_usage[2]; // Positive = surplus
-    if (surplus2 < 0) { // take from lake
-        if (-surplus2 > d_lake_contents) { // not enough there
-            d_city_usage[2] -= d_lake_contents;
+    int surplus1 = d_city_supply[1] - d_city_usage[1]; // Positive = surplus
+    if (surplus1 < 0) { // take from lake
+        if (-surplus1 > d_lake_contents) { // not enough there
+            d_city_usage[1] -= d_lake_contents;
             d_lake_contents = 0;
         } else {
-            d_lake_contents += surplus2;
-            d_city_usage[2] = d_city_supply[2];
+            d_lake_contents += surplus1;
+            d_city_usage[1] = d_city_supply[1];
         }
     } else { // surplus2 > 0, Give to lake
-        if (surplus2 + d_lake_contents > LAKE_MAX) { // it will be full
-            d_city_usage[2] += 500 - d_lake_contents;
+        if (surplus1 + d_lake_contents > LAKE_MAX) { // it will be full
+            d_city_usage[1] += 500 - d_lake_contents;
             d_lake_contents = LAKE_MAX;
         } else {
-            d_lake_contents += surplus2;
-            d_city_usage[2] = d_city_supply[2];
+            d_lake_contents += surplus1;
+            d_city_usage[1] = d_city_supply[1];
         }
     }
     debugPrint();
