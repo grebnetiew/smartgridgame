@@ -5,7 +5,7 @@
 const int LAKE_MAX    = 500; // Lake can hold this much power
 const int COAL_MAX    = 50;  // Maximum power plant gen
 const int SENSITIVITY = 5;   // City led turns yellow at this deficit/surplus
-const int LINK_MAX    = 30;  // Max. power transport over link
+const int LINK_MAX    = 300; // Max. power transport over link
 
 struct CityState {
     // City uses a fixed graph with 4 vertices
