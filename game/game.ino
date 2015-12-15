@@ -13,8 +13,8 @@ CityState state;
 BoardState board(expander);
 
 size_t minutes = 0;
+size_t highScore = 0;
 const size_t MIN_WRAP = 12;
-const size_t UPDATE_EVERY 3;
 
 void setup() {
   expander.init();
@@ -34,9 +34,7 @@ void loop() {
     board.setLeds(state);
     board.updateScores(state);
   }
-  if (minutes % UPDATE_EVERY == 0) {
-    updateLCD();
-  }
+  updateLCD();
 }
 
 void updateLCD() {  

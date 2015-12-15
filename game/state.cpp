@@ -23,10 +23,10 @@ void CityState::init() {
 }
 
 void CityState::tick() {
-    if(++d_time == 240) {
-        d_time = 0;
-        d_score = 0;
+    if(d_time == 240) {
+        return;
     }
+    ++d_time;
     d_solar_power = solar_power();
 
     d_city_usage[0] = base_usage(0)  / d_price * 0.7;
