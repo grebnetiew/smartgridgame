@@ -39,7 +39,8 @@ void BoardState::setLeds(CityState const &state) {
 }
 
 void BoardState::updateScores(CityState &state) const {
-  state.d_score += (ledCoal == 1 ? 20 : 0) +
+  state.d_score += (ledCoal == 1 ? 5 : -10) + 
+    static_cast<int>(10 * (1 - state.d_price)) +
     (ledCity[0] == 2 ? 3 : (ledCity[0] == 1 || ledCity[0] == 3) ? -1 : -5) +
     (ledCity[1] == 2 ? 3 : (ledCity[1] == 1 || ledCity[1] == 3) ? -1 : -5) +
     (ledCity[2] == 2 ? 3 : (ledCity[2] == 1 || ledCity[2] == 3) ? -1 : -5) +
