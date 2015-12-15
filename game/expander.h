@@ -7,9 +7,9 @@
 
 class IOExpander {
 public:
-    IOExpander();
+    void init() const;
     void set(size_t pin, bool state);
-    bool digitalReadExt(uint8_t pin);
+    bool digitalReadExt(uint8_t pin) const;
 };
 
 

@@ -17,9 +17,10 @@ const size_t MIN_WRAP = 12;
 const size_t UPDATE_EVERY 3;
 
 void setup() {
+  expander.init();
   Serial.begin(9600);
   lcd.begin(16, 2); // This contains Wire.begin()
-
+  
   // Euro glyph
   static uint8_t euro[8] = {7,8,30,8,30,8,7,0};
   lcd.createChar(0, euro);

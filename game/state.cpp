@@ -61,6 +61,8 @@ void CityState::tick() {
     debugPrint();
 }
 
+extern IOExpander expander;
+
 void CityState::debugPrint() const {
     char output[40];
     Serial.println("Tick: " + String(d_time));
@@ -71,7 +73,22 @@ void CityState::debugPrint() const {
     sprintf(output, "            %d    ", d_city_supply[2]);
     Serial.println(output);
     Serial.println("Lake: " + String(d_lake_contents));
-    Serial.println("Power (solar + plant): " + String(d_solar_power) + " " + String(d_coal_power)); 
+    Serial.println("Power (solar + plant): " + String(d_solar_power) + " " + String(d_coal_power));
+    Serial.println("Button map: " + 
+      String(expander.digitalReadExt(0)) + " " +
+      String(expander.digitalReadExt(1)) + " " +
+      String(expander.digitalReadExt(2)) + " " +
+      String(expander.digitalReadExt(3)) + " " +
+      String(expander.digitalReadExt(4)) + " " +
+      String(expander.digitalReadExt(5)) + " " +
+      String(expander.digitalReadExt(6)) + " " +
+      String(expander.digitalReadExt(7)) + " " +
+      String(expander.digitalReadExt(8)) + " " +
+      String(expander.digitalReadExt(9)) + " " +
+      String(expander.digitalReadExt(10)) + " " +
+      String(expander.digitalReadExt(11)) + " " +
+      String(expander.digitalReadExt(12)) + " " +
+      String(expander.digitalReadExt(13)));
 }
 
 static int button_mult[5] = {-1, -1, 1, 1, -1};
