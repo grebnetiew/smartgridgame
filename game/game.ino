@@ -28,10 +28,10 @@ void setup() {
 
 void loop() {
   board.readAndProcessButtons(state);
+  board.setLeds(state);
   if(++minutes == MIN_WRAP) {
     minutes = 0;
     state.tick();
-    board.setLeds(state);
     board.updateScores(state);
   }
   updateLCD();
