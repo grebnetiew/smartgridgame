@@ -14,6 +14,7 @@ BoardState board(expander);
 
 size_t minutes = 0;
 const size_t MIN_WRAP = 12;
+const size_t UPDATE_EVERY 3;
 
 void setup() {
   Serial.begin(9600);
@@ -32,7 +33,9 @@ void loop() {
     board.setLeds(state);
     board.updateScores(state);
   }
-  updateLCD();
+  if (minutes % UPDATE_EVERY == 0) {
+    updateLCD();
+  }
 }
 
 void updateLCD() {  
