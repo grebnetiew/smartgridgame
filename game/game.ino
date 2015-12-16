@@ -14,7 +14,7 @@ BoardState board(expander);
 
 size_t minutes = 0;
 size_t highScore = 0;
-const size_t MIN_WRAP = 12;
+const size_t MIN_WRAP = 8;
 
 void setup() {
   expander.init();
@@ -27,6 +27,14 @@ void setup() {
 }
 
 void loop() {
+  if (state.d_time == 240) {
+    if (state.d_score > highScore) {
+      highScore = state.d_score;
+    }
+    highscoreLCD();
+    board.resetIfKeyPressed(state);
+    return;
+  }
   board.readAndProcessButtons(state);
   board.setLeds(state);
   if(++minutes == MIN_WRAP) {
@@ -55,5 +63,17 @@ void updateLCD() {
   lcd.setCursor(0, 1);
   lcd.print("Score:     ");
   lcd.print(nDigit(state.d_score, 5, ' '));
+}
+
+void highscoreLCD() {  
+  // Print score
+  lcd.setCursor(0, 0);
+  lcd.print("Score:     ");
+  lcd.print(nDigit(state.d_score, 5, ' '));
+
+  // Print score
+  lcd.setCursor(0, 1);
+  lcd.print("Highscore: ");
+  lcd.print(nDigit(highScore, 5, ' '));
 }
 

@@ -17,8 +17,8 @@ void BoardState::setLeds(CityState const &state) {
                      (delta <= 4 * SENSITIVITY) ? 3 : 4;
     }
 
-    ledCoal = (state.d_coal_power <=     COAL_MAX / 3) ? 0 :
-              (state.d_coal_power <= 2 * COAL_MAX / 3) ? 1 : 2;
+    ledCoal = (state.d_coal_power <= COAL_MIN +     COAL_ADD / 3) ? 0 :
+              (state.d_coal_power <= COAL_MIN + 2 * COAL_ADD / 3) ? 1 : 2;
 
     ledLake = (state.d_lake_contents <= 0.3 * LAKE_MAX) ? 0 :
               (state.d_lake_contents <= 0.7 * LAKE_MAX) ? 1 : 2;
@@ -35,6 +35,13 @@ void BoardState::setLeds(CityState const &state) {
         exp.set(i + 20, ledCoal == i);
         // leds 23-25 are for the lake
         exp.set(i + 23, ledLake == i);
+    }
+    // If the lake is being filled or drained, blink the upper or lower led
+    if(state.d_lake_delta > 3) {
+      exp.set(25, state.d_time % 2);
+    }
+    if(state.d_lake_delta < -3) {
+      exp.set(23, state.d_time % 2);
     }
 }
 
@@ -56,3 +63,12 @@ void BoardState::readAndProcessButtons(CityState &state) {
         buttonPressed[i] = pressed;
     }
 }
+
+void BoardState::resetIfKeyPressed(CityState &state) {
+  for (size_t i = 0; i != 14; ++i) {
+    if (exp.digitalReadExt(i)) {
+      state.init();
+    }
+  }
+}
+

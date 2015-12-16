@@ -16,8 +16,9 @@ void CityState::init() {
         d_city_supply[i] = 10;
     }
     d_solar_power   = 0;             // to city 3
-    d_coal_power    = COAL_MAX / 2;   // to city 0
+    d_coal_power    = COAL_MIN + COAL_ADD / 2;   // to city 0
     d_lake_contents = 0;
+    d_lake_delta    = 0;
     d_price         = 1.0;
     d_score         = 0;
 }
@@ -38,7 +39,7 @@ void CityState::tick() {
     d_city_supply[1] = d_link_delta[0] - d_link_delta[2] - d_link_delta[3];
     d_city_supply[2] = d_link_delta[1] + d_link_delta[2] - d_link_delta[4];
     d_city_supply[3] = d_solar_power + d_link_delta[3] + d_link_delta[4];
-
+    int previous_lake_contents = d_lake_contents;
     // Deal with the lake
     int surplus1 = d_city_supply[1] - d_city_usage[1]; // Positive = surplus
     if (surplus1 < 0) { // take from lake
@@ -58,6 +59,7 @@ void CityState::tick() {
             d_city_usage[1] = d_city_supply[1];
         }
     }
+    d_lake_delta = d_lake_contents - previous_lake_contents;
     debugPrint();
 }
 
@@ -91,19 +93,19 @@ void CityState::debugPrint() const {
       String(expander.digitalReadExt(13)));
 }
 
-static int button_mult[5] = {-1, -1, 1, 1, -1};
+static int button_mult[5] = {1, -1, 1, -1, 1};
 
 void CityState::processButton(size_t btn) {
     // 0 (-) and 1 (+) are for link 1, and so on (link 5 has 8, 9)
     if (btn < 10 && btn % 2 == 0) {
-        d_link_delta[btn / 2] -= LINK_MAX / 3 * button_mult[btn/2];
+        d_link_delta[btn / 2] -= LINK_GRANULARITY * button_mult[btn/2];
         if (d_link_delta[btn / 2] < -LINK_MAX)
             d_link_delta[btn / 2] = -LINK_MAX;
         if (d_link_delta[btn / 2] >  LINK_MAX)
             d_link_delta[btn / 2] =  LINK_MAX;
     }
     if (btn < 10 && btn % 2 == 1) {
-        d_link_delta[btn / 2] += LINK_MAX / 3 * button_mult[btn/2];
+        d_link_delta[btn / 2] += LINK_GRANULARITY * button_mult[btn/2];
         if (d_link_delta[btn / 2] >  LINK_MAX)
             d_link_delta[btn / 2] =  LINK_MAX;
         if (d_link_delta[btn / 2] < -LINK_MAX)
@@ -111,11 +113,11 @@ void CityState::processButton(size_t btn) {
     }
 
     // 10 (-), 11 are the production
-    if (btn == 10 && d_coal_power > 0) {
-        d_coal_power -= COAL_MAX / 2;
+    if (btn == 10 && d_coal_power > COAL_MIN) {
+        d_coal_power -= COAL_ADD / 2;
     }
-    if (btn == 11 && d_coal_power < COAL_MAX) {
-        d_coal_power += COAL_MAX / 2;
+    if (btn == 11 && d_coal_power < COAL_MIN + COAL_ADD) {
+        d_coal_power += COAL_ADD / 2;
     }
 
     // 12 (-), 13 are the price
@@ -127,7 +129,7 @@ void CityState::processButton(size_t btn) {
     }
 }
 
-static int function_usage[24] = {13, 12, 11, 9, 7, 7, 8, 12, 13, 12,
+static int function_usage[24] = {13, 10, 9, 7, 5, 5, 8, 12, 13, 12,
     12, 11, 10, 10, 9, 9, 10, 12, 16, 17, 17, 16, 14, 14};
 inline int CityState::base_usage(int delta) const {
     return function_usage[(delta / 10 + delta + 24) % 24];
