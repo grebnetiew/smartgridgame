@@ -132,7 +132,7 @@ void CityState::processButton(size_t btn) {
 static int function_usage[24] = {13, 10, 9, 7, 5, 5, 8, 12, 13, 12,
     12, 11, 10, 10, 9, 9, 10, 12, 16, 17, 17, 16, 14, 14};
 inline int CityState::base_usage(int delta) const {
-    return function_usage[(delta / 10 + delta + 24) % 24];
+    return function_usage[(d_time / 10 + delta + 24) % 24];
 }
 
 static int function_power[24] = {0, 0, 0, 0, 0, 0, 0, 0, 0,
