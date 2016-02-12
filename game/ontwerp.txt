@@ -1,0 +1,120 @@
+Ontwerp van game.ino
+====================
+
+Dit programma is tot stand gekomen ondanks vele veranderingen in hardware en
+doel. Het is dus qua opzet niet altijd even logisch; het zou zeker beter zijn
+het geheel te herschrijven, maar daarvoor ontbreekt de tijd. In dit document
+probeer ik de functie van alle code toe te lichten. Sterkte.
+
+Het spel is grofweg geabstraheerd als:
+
+    een I/O-module (ooit losse hardware), die knoppen uitleest en lampjes
+    aanstuurt. De klasse IOExpander doet dit;
+
+    een spelbord, die de huidige status van de LEDs bijhoudt en afhankelijk
+    van de status van het spel de juiste lampen aan en uit kan zetten en
+    knoppen kan uitlezen. Houdt ook score bij, want die is afhankelijk van
+    brandende LEDs (lelijk!). De klasse BoardState doet dit;
+
+    een spel, dat de 'stroom' van energie van stad naar stad bijhoudt,
+    productie en consumptie bepaalt, het stuwmeer opvult, etc.. De klasse
+    CityState doet dit.
+
+Hieronder kort de methodes - de meer hardcore const &const-notatie vind je in
+de broncode.
+
+IOExpander
+----------
+
+Methodes zijn
+
+	init()  - aan te roepen in Arduino::setup(); stelt pin-modes in en zet
+	lampjes aanvankelijk uit
+
+	set(size_t lamp, bool status)  - zet een lamp (nummer in 0..25) aan of uit
+
+	digitalReadExt(uint8_t knop)  - leest een knop (nummer in 0..13) uit; true
+	is ingedrukt
+
+
+BoardState
+----------
+
+Methodes zijn
+
+	Constructor  - aan te roepen in setup(), doet wat geheugenallocatie. Er is
+	geen destructor want een Arduinoprogramma stopt toch nooit. Lelijk!
+
+	setLeds(CityState state)  - leest de meegegeven spelstatus uit en stelt de
+	LEDs in; dwz het update zowel de array van booleans in dit object als dat
+	het de set()-methode in de expander aanroept
+
+    updateScores(CityState state)  - stelt de score in 'state' in m.b.v.
+    huidige status van de LEDs.
+
+    readAndProcessButtons(CityState state)  - checkt welke knoppen ingedrukt
+    zijn, filtert op 'ingedrukt houden', en roept state.processButton aan voor
+    elke nieuw ingedrukte knop
+
+    resetIfKeyPressed(CityState state)  - checkt of er een knop ingedrukt is
+    en reset de 'state' als dat zo is
+
+
+CityState
+---------
+
+Methodes zijn
+
+	Constructor  - roept init aan
+
+    tick()  - zorgt dat 1/10 uur verstrijkt in het spel (tenzij de dag voorbij
+    is). Alle stroomvoorzieningen, producties en transporten worden opnieuw
+    berekend, en debugPrint wordt aangeroepen.
+
+    processButton(size_t btn)  - past de parameters van het spel aan
+    afhankelijk van de ingedrukte knop
+
+    init()  - stelt de toestand (productie etc) in op beginwaarden
+
+    debugPrint()  - stuurt debug-info naar de Serialverbinding met PC. Vereist
+    een globaal object van klasse IOExpander. Lelijk!
+
+    base_usage(int delta)  - lookup-table afhankelijk van d_time en delta
+
+    solar_power()  - lookup-table afhankelijk van d_time
+
+
+Game.ino
+--------
+
+Hier worden (globaal - lelijk! maar moet vanwege de splitsing van setup en
+loop) de drie bovenstaande objecten gemaakt. Setup en Loop zijn vereist, zo
+werkt Arduino.
+
+	setup()  - initialiseert de display en de expander (Lelijk: constructor
+	maken)
+
+	loop()  - als de dag voorbij is, beeldt de highscore af op het schermpje
+	en wacht op input. Anders, roept relevante methodes van bovenstaande
+	klasses aan. Om het spel niet te snel te laten gaan, wordt maar eens in de
+	8 keer tick() gedaan. (Dus, ja, er gaan 80 minuten in een uur. Sst.)
+
+	updateLCD()  - print relevante info op het schermpje
+
+	highscoreLCD()  - print highscore op het schermpje, voor als de 'dag'
+	voorbij is
+
+
+utility
+-------
+
+In util.cpp/.h zijn nog een paar vrij simpele methodes die ontbreken uit de
+Arduino-library.
+
+	log(String bericht)  - print het bericht op de LCD en wacht een seconde
+
+	nDigit(int i, size_t digits, char pad)  - geeft het getal i terug als
+	string van minstens 'digits' tekens, eventueel van voren aangevuld met
+	'pad' (standaard 0)
+
+	doubleDigit(int i)  = nDigit(i, 2)
